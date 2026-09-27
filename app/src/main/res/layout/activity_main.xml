@@ -1,45 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="24dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SMART PANTRY"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp" />
+    <!-- Navigation toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/mainToolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:title="Smart Pantry"
+        android:titleTextColor="@android:color/white"
+        android:layout_marginBottom="24dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Food Recycling"
-        android:textSize="15dp"
-        android:layout_marginBottom="30dp" />
-
+    <!-- Add pantry item -->
     <Button
         android:id="@+id/btnAddItem"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Item"
-        android:layout_marginBottom="15dp"
-        android:backgroundTint="#4CAF50"/>
+        android:text="Add item to pantry"
+        android:layout_marginBottom="12dp" />
 
+    <!-- View pantry items -->
     <Button
         android:id="@+id/btnViewItems"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="View Items"
-        android:layout_marginBottom="15dp" />
+        android:text="View items in pantry"
+        android:layout_marginBottom="12dp" />
 
+    <!-- Check expiry dates -->
     <Button
         android:id="@+id/btnExpiry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Check Item Expiry Dates" />
+        android:text="Check pantry items expiry date"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Suggested recipes -->
+    <Button
+        android:id="@+id/btnSuggestedRecipes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Available recipes"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Settings -->
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Settings" />
 
 </LinearLayout>
