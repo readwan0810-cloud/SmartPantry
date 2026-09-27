@@ -16,6 +16,7 @@ public class ExpiryActivity extends AppCompatActivity {
 
     private ListView listExpiryItems;
     private Button btnBackHome;
+    private PantryDBHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,28 @@ public class ExpiryActivity extends AppCompatActivity {
         listExpiryItems = findViewById(R.id.listExpiryItems);
         btnBackHome = findViewById(R.id.btnBackHome);
 
-        // Get all pantry items
-        ArrayList<PantryItem> pantryItems = PantryStorage.getItems();
+        // Connect to the SQLite database
+        databaseHelper = new PantryDBHelper(this);
+
+        // Return to the Smart Pantry home screen
+        btnBackHome.setOnClickListener(view -> {
+            finish();
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Reload expiry information whenever the screen is opened
+        loadExpiryItems();
+    }
+
+    private void loadExpiryItems() {
+
+        // Get pantry items from the SQLite database
+        ArrayList<PantryItem> pantryItems =
+                databaseHelper.getAllPantryItems();
 
         // Create a list to display expiry information
         ArrayList<String> expiryItems = new ArrayList<>();
@@ -47,11 +68,25 @@ public class ExpiryActivity extends AppCompatActivity {
             String itemName = item.getItemName();
             String expiryDateText = item.getExpiryDate();
 
+            // Expiry date is optional
+            if (expiryDateText == null || expiryDateText.trim().isEmpty()) {
+
+                expiryItems.add(
+                        itemName
+                                + " | No expiry date"
+                );
+
+                continue;
+            }
+
             try {
 
                 // Convert the expiry date from text to a date
                 LocalDate expiryDate =
-                        LocalDate.parse(expiryDateText, formatter);
+                        LocalDate.parse(
+                                expiryDateText,
+                                formatter
+                        );
 
                 // Work out the number of days until expiry
                 long daysUntilExpiry =
@@ -74,7 +109,7 @@ public class ExpiryActivity extends AppCompatActivity {
                     status = "EXPIRING SOON";
 
                 }
-                // Otherwise the item is still safe based on its date
+                // Otherwise the item is not expiring soon
                 else {
 
                     status = "NOT EXPIRED";
@@ -99,18 +134,23 @@ public class ExpiryActivity extends AppCompatActivity {
             }
         }
 
+        // Display a message if the pantry is empty
+        if (expiryItems.isEmpty()) {
+
+            expiryItems.add(
+                    "No pantry items available."
+            );
+        }
+
+        // Create the ListView adapter
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        expiryItems
+                );
+
         // Display the expiry information
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                expiryItems
-        );
-
         listExpiryItems.setAdapter(adapter);
-
-        // Return to the Smart Pantry home screen
-        btnBackHome.setOnClickListener(view -> {
-            finish();
-        });
     }
 }
