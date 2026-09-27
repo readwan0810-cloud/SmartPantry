@@ -12,101 +12,121 @@ public class AddItemActivity extends AppCompatActivity {
     private EditText editItemName;
     private EditText editCategory;
     private EditText editQuantity;
+    private EditText editUnit;
     private EditText editExpiryDate;
-    private Button btnSaveItem;
 
+    private Button btnSaveItem;
     private Button btnBackHome;
+
+    private PantryDBHelper databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Connect Java to the Add Pantry Item XML screen
         setContentView(R.layout.activity_add_item);
 
-        // Connect Java variables to the XML fields
         editItemName = findViewById(R.id.editItemName);
         editCategory = findViewById(R.id.editCategory);
         editQuantity = findViewById(R.id.editQuantity);
+        editUnit = findViewById(R.id.editUnit);
         editExpiryDate = findViewById(R.id.editExpiryDate);
+
         btnSaveItem = findViewById(R.id.btnSaveItem);
         btnBackHome = findViewById(R.id.btnBackHome);
 
-        // Save button
-        btnSaveItem.setOnClickListener(view -> {
+        databaseHelper = new PantryDBHelper(this);
 
-            // Get the information entered by the user
-            String itemName = editItemName.getText().toString().trim();
-            String category = editCategory.getText().toString().trim();
-            String quantityText = editQuantity.getText().toString().trim();
-            String expiryDate = editExpiryDate.getText().toString().trim();
+        btnSaveItem.setOnClickListener(view -> savePantryItem());
 
-            // Check that all fields have been completed
-            if (itemName.isEmpty() ||
-                    category.isEmpty() ||
-                    quantityText.isEmpty() ||
-                    expiryDate.isEmpty()) {
+        btnBackHome.setOnClickListener(view -> finish());
+    }
 
-                Toast.makeText(
-                        AddItemActivity.this,
-                        "Please complete all fields",
-                        Toast.LENGTH_SHORT
-                ).show();
+    private void savePantryItem() {
 
-                return;
-            }
+        String itemName = editItemName.getText().toString().trim();
+        String category = editCategory.getText().toString().trim();
+        String quantityText = editQuantity.getText().toString().trim();
+        String unit = editUnit.getText().toString().trim();
+        String expiryDate = editExpiryDate.getText().toString().trim();
 
-            // Check that quantity is a valid number
-            try {
-                int quantity = Integer.parseInt(quantityText);
+        // Validate item name
+        if (itemName.isEmpty()) {
+            editItemName.setError("Please enter an item name");
+            editItemName.requestFocus();
+            return;
+        }
 
-                if (quantity <= 0) {
-                    Toast.makeText(
-                            AddItemActivity.this,
-                            "Quantity must be greater than 0",
-                            Toast.LENGTH_SHORT
-                    ).show();
+        // Validate category
+        if (category.isEmpty()) {
+            editCategory.setError("Please enter a category");
+            editCategory.requestFocus();
+            return;
+        }
 
-                    return;
-                }
+        // Validate quantity
+        if (quantityText.isEmpty()) {
+            editQuantity.setError("Please enter a quantity");
+            editQuantity.requestFocus();
+            return;
+        }
 
-// Create a PantryItem object using the information entered
-                PantryItem pantryItem = new PantryItem(
-                        itemName,
-                        category,
-                        quantity,
-                        expiryDate
-                );
+        double quantity;
 
-// Store the pantry item
-                PantryStorage.addItem(pantryItem);
+        try {
+            quantity = Double.parseDouble(quantityText);
+        } catch (NumberFormatException e) {
+            editQuantity.setError("Please enter a valid number");
+            editQuantity.requestFocus();
+            return;
+        }
 
-// Tell the user that the item was saved
-                Toast.makeText(
-                        AddItemActivity.this,
-                        itemName + " saved successfully!",
-                        Toast.LENGTH_SHORT
-                ).show();
+        if (quantity <= 0) {
+            editQuantity.setError("Quantity must be greater than zero");
+            editQuantity.requestFocus();
+            return;
+        }
 
-// Clear the form after saving
-                editItemName.setText("");
-                editCategory.setText("");
-                editQuantity.setText("");
-                editExpiryDate.setText("");
+        // Validate unit
+        if (unit.isEmpty()) {
+            editUnit.setError("Please enter a unit");
+            editUnit.requestFocus();
+            return;
+        }
 
-            } catch (NumberFormatException e) {
+        // Add item to SQLite database
+        long result = databaseHelper.addPantryItem(
+                itemName,
+                category,
+                quantity,
+                unit,
+                expiryDate
+        );
 
-                Toast.makeText(
-                        AddItemActivity.this,
-                        "Please enter a valid quantity",
-                        Toast.LENGTH_SHORT
-                ).show();
-            }
+        if (result != -1) {
 
-        });
+            Toast.makeText(
+                    this,
+                    "Pantry item saved successfully",
+                    Toast.LENGTH_SHORT
+            ).show();
 
-        btnBackHome.setOnClickListener(view ->{
-            finish();
-        });
+            // Clear the form
+            editItemName.setText("");
+            editCategory.setText("");
+            editQuantity.setText("");
+            editUnit.setText("");
+            editExpiryDate.setText("");
+
+            editItemName.requestFocus();
+
+        } else {
+
+            Toast.makeText(
+                    this,
+                    "Failed to save pantry item",
+                    Toast.LENGTH_SHORT
+            ).show();
+        }
     }
 }

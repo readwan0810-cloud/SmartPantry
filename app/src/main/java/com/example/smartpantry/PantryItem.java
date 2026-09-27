@@ -2,16 +2,31 @@ package com.example.smartpantry;
 
 public class PantryItem {
 
+    private int id;
     private String itemName;
     private String category;
-    private int quantity;
+    private double quantity;
+    private String unit;
     private String expiryDate;
 
-    public PantryItem(String itemName, String category, int quantity, String expiryDate) {
+    public PantryItem(
+            int id,
+            String itemName,
+            String category,
+            double quantity,
+            String unit,
+            String expiryDate) {
+
+        this.id = id;
         this.itemName = itemName;
         this.category = category;
         this.quantity = quantity;
+        this.unit = unit;
         this.expiryDate = expiryDate;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getItemName() {
@@ -22,8 +37,12 @@ public class PantryItem {
         return category;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
+    }
+
+    public String getUnit() {
+        return unit;
     }
 
     public String getExpiryDate() {

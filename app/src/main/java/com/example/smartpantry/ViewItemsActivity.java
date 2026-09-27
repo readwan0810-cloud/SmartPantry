@@ -1,5 +1,6 @@
 package com.example.smartpantry;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -14,46 +15,96 @@ public class ViewItemsActivity extends AppCompatActivity {
     private ListView listPantryItems;
     private Button btnBackHome;
 
+    private PantryDBHelper databaseHelper;
+
+    private ArrayList<PantryItem> pantryItems;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Connect Java to the View Pantry Items XML screen
         setContentView(R.layout.activity_view_items);
 
-        // Connect Java variables to the XML components
         listPantryItems = findViewById(R.id.listPantryItems);
         btnBackHome = findViewById(R.id.btnBackHome);
 
-        // Get the saved pantry items
-        ArrayList<PantryItem> pantryItems = PantryStorage.getItems();
+        databaseHelper = new PantryDBHelper(this);
 
-        // Create a list of text to display
+        btnBackHome.setOnClickListener(view -> finish());
+
+        listPantryItems.setOnItemClickListener((parent, view, position, id) -> {
+
+            if (!pantryItems.isEmpty()) {
+
+                PantryItem selectedItem = pantryItems.get(position);
+
+                Intent intent = new Intent(
+                        ViewItemsActivity.this,
+                        EditItemActivity.class
+                );
+
+                intent.putExtra("ITEM_ID", selectedItem.getId());
+
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        loadPantryItems();
+    }
+
+    private void loadPantryItems() {
+
+        pantryItems = databaseHelper.getAllPantryItems();
+
         ArrayList<String> displayItems = new ArrayList<>();
 
         for (PantryItem item : pantryItems) {
 
-            String itemDetails =
-                    item.getItemName()
-                            + " | " + item.getCategory()
-                            + " | Quantity: " + item.getQuantity()
-                            + " | Expiry: " + item.getExpiryDate();
+            String expiry;
 
-            displayItems.add(itemDetails);
+            if (item.getExpiryDate() == null ||
+                    item.getExpiryDate().isEmpty()) {
+
+                expiry = "No expiry date";
+
+            } else {
+
+                expiry = "Expiry: " + item.getExpiryDate();
+            }
+
+            String displayText =
+                    item.getItemName()
+                            + " | "
+                            + item.getCategory()
+                            + "\nQuantity: "
+                            + item.getQuantity()
+                            + " "
+                            + item.getUnit()
+                            + "\n"
+                            + expiry;
+
+            displayItems.add(displayText);
         }
 
-        // Display the pantry items
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_list_item_1,
-                displayItems
-        );
+        if (displayItems.isEmpty()) {
+
+            displayItems.add(
+                    "Your pantry is currently empty."
+            );
+        }
+
+        ArrayAdapter<String> adapter =
+                new ArrayAdapter<>(
+                        this,
+                        android.R.layout.simple_list_item_1,
+                        displayItems
+                );
 
         listPantryItems.setAdapter(adapter);
-
-        // Return to the Smart Pantry home screen
-        btnBackHome.setOnClickListener(view -> {
-            finish();
-        });
     }
 }
