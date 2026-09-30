@@ -1,24 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="25dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
-        android:textSize="28sp"
+        android:textSize="30sp"
         android:textStyle="bold"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="25dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Expiry Alerts"
-        android:textSize="18sp"
+        android:text="Expired Food Alerts"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <Switch
@@ -27,26 +25,27 @@
         android:layout_height="wrap_content"
         android:text="Enable expiry alerts"
         android:checked="true"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="25dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Preferred Unit"
-        android:textSize="18sp"
+        android:text="Unit Preffered"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="6dp" />
 
     <Spinner
         android:id="@+id/spinnerPreferredUnit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp" />
+        android:layout_marginBottom="35dp" />
 
     <Button
-        android:id="@+id/btnBackHome"
+        android:id="@+id/btnBack"
+        android:backgroundTint="#4CAF50"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="BACK TO HOME" />
+        android:text="Back" />
 
 </LinearLayout>

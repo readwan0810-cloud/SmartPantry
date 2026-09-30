@@ -1,12 +1,12 @@
 package com.example.smartpantry;
 
-public class Recipe {
+public class Recipes {
 
     private int id;
     private String recipeName;
     private String instructions;
 
-    public Recipe(
+    public Recipes(
             int id,
             String recipeName,
             String instructions) {

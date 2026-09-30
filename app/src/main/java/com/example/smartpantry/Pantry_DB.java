@@ -1,14 +1,11 @@
 package com.example.smartpantry;
-
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.database.*;
+import android.database.sqlite.*;
+import java.util.*;
 
-import java.util.ArrayList;
-
-public class PantryDBHelper extends SQLiteOpenHelper {
+public class Pantry_DB extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "smart_pantry.db";
     private static final int DATABASE_VERSION = 3;
@@ -32,11 +29,11 @@ public class PantryDBHelper extends SQLiteOpenHelper {
     private static final String COLUMN_INSTRUCTIONS = "instructions";
 
     private static final String COLUMN_INGREDIENT_ID = "id";
-    private static final String COLUMN_INGREDIENT_NAME = "ingredient_name";
+    private static final String COLUMN_INGREDIENT_NAME = "food_name";
     private static final String COLUMN_REQUIRED_QUANTITY = "required_quantity";
     private static final String COLUMN_INGREDIENT_UNIT = "unit";
 
-    public PantryDBHelper(Context context) {
+    public Pantry_DB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
@@ -55,7 +52,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
 
         db.execSQL(createPantryTable);
 
-        // Create recipes table
+        // Creating a recipes table
         String createRecipesTable = "CREATE TABLE " + TABLE_RECIPES + " (" +
                 COLUMN_RECIPE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 COLUMN_RECIPE_NAME + " TEXT NOT NULL, " +
@@ -64,7 +61,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
 
         db.execSQL(createRecipesTable);
 
-        // Create recipe ingredients table
+        // Creating a recipe ingredients table
         String createRecipeIngredientsTable =
                 "CREATE TABLE " + TABLE_RECIPE_INGREDIENTS + " (" +
                         COLUMN_INGREDIENT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -76,7 +73,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
 
         db.execSQL(createRecipeIngredientsTable);
 
-        // Add starter recipes
+        // Add the starting recipes
         seedRecipes(db);
     }
 
@@ -86,8 +83,8 @@ public class PantryDBHelper extends SQLiteOpenHelper {
             int oldVersion,
             int newVersion) {
 
-        // Upgrade from version 1 to version 2.
-        // Existing pantry data is preserved.
+        // Updates from version 1 to version 2.
+
         if (oldVersion < 2) {
 
             String createRecipesTable =
@@ -112,9 +109,8 @@ public class PantryDBHelper extends SQLiteOpenHelper {
             db.execSQL(createRecipeIngredientsTable);
         }
 
-        // Upgrade from version 2 to version 3.
-        // Replace the temporary test recipes with the
-        // complete recipe collection.
+        // Updates from version 2 to version 3.
+
         if (oldVersion < 3) {
             seedRecipes(db);
         }
@@ -122,168 +118,170 @@ public class PantryDBHelper extends SQLiteOpenHelper {
 
     private void seedRecipes(SQLiteDatabase db) {
 
-        // Remove existing recipe seed data before loading
-        // the complete recipe collection.
+
+        // Completes food recipe collection.
         db.delete(TABLE_RECIPE_INGREDIENTS, null, null);
         db.delete(TABLE_RECIPES, null, null);
 
-        // Recipe 1
-        long chickenFriedRiceId = addRecipe(
+        // 1st Recipe
+
+        long breadJamId = addRecipe(
                 db,
-                "Chicken Fried Rice",
-                "Cook the rice and chicken. Stir-fry the ingredients together and serve."
+                "Bread and Jam",
+                "Take you 2 slices of bread, spread jam all over the two slices, cut in triangular slices and enjoy"
         );
+        addRecipeIngredient(db,breadJamId, "bread",2.0,"item");
+        addRecipeIngredient(db, breadJamId,"jam",1.0,"item");
 
-        addRecipeIngredient(db, chickenFriedRiceId, "rice", 1.0, "kg");
-        addRecipeIngredient(db, chickenFriedRiceId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, chickenFriedRiceId, "onion", 1.0, "item");
 
-        // Recipe 2
-        long tomatoRiceId = addRecipe(
+
+        // 2nd Recipe
+        long cheeseBreadId = addRecipe(
                 db,
-                "Tomato Rice",
-                "Cook the rice with tomatoes and onion until the ingredients are soft and combined."
+                "Bread and Cheese",
+                "Take you 2 slices of bread, grate your cheese and sprinkle it on the bread, toast it or enjoy as is"
         );
+        addRecipeIngredient(db,cheeseBreadId, "bread",2.0,"item");
+        addRecipeIngredient(db,cheeseBreadId,"cheese",1.0,"item");
 
-        addRecipeIngredient(db, tomatoRiceId, "rice", 1.0, "kg");
-        addRecipeIngredient(db, tomatoRiceId, "tomato", 2.0, "item");
-        addRecipeIngredient(db, tomatoRiceId, "onion", 1.0, "item");
 
-        // Recipe 3
-        long chickenOnionId = addRecipe(
+        // 3rd Recipe
+        long peanutbutterBreadId = addRecipe(
                 db,
-                "Chicken and Onion",
-                "Cook the chicken thoroughly and add chopped onion. Cook until the onion is soft."
-        );
-
-        addRecipeIngredient(db, chickenOnionId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, chickenOnionId, "onion", 1.0, "item");
-
-        // Recipe 4
-        long potatoEggId = addRecipe(
-                db,
-                "Potato and Egg",
-                "Cook the potatoes until tender, prepare the eggs, and serve together."
-        );
-
-        addRecipeIngredient(db, potatoEggId, "potato", 2.0, "item");
-        addRecipeIngredient(db, potatoEggId, "egg", 2.0, "item");
-
-        // Recipe 5
-        long vegetableRiceId = addRecipe(
-                db,
-                "Vegetable Rice",
+                "Bread and Peanut Butter",
                 "Cook the rice and vegetables together until everything is tender."
         );
 
-        addRecipeIngredient(db, vegetableRiceId, "rice", 1.0, "kg");
-        addRecipeIngredient(db, vegetableRiceId, "carrot", 1.0, "item");
-        addRecipeIngredient(db, vegetableRiceId, "onion", 1.0, "item");
+        addRecipeIngredient(db, peanutbutterBreadId, "bread", 2.0, "item");
+        addRecipeIngredient(db, peanutbutterBreadId, "peanut butter", 1.0, "item");
 
-        // Recipe 6
-        long chickenRiceId = addRecipe(
+
+        // 4th Recipe
+        long frenchToastId = addRecipe(
                 db,
-                "Simple Chicken Rice",
-                "Cook the chicken and rice separately, then combine and serve."
+                "French Toast",
+                "Scramble 2 eggs in a bowl, dip the bread into the eggs, fry on a hot pan and enjoy"
         );
 
-        addRecipeIngredient(db, chickenRiceId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, chickenRiceId, "rice", 1.0, "kg");
+        addRecipeIngredient(db, frenchToastId, "bread", 2.0, "item");
+        addRecipeIngredient(db, frenchToastId, "eggs", 2.0, "item");
 
-        // Recipe 7
-        long eggRiceId = addRecipe(
+        // 5th Recipe
+        long chickenSandwichId = addRecipe(
                 db,
-                "Egg Fried Rice",
-                "Cook the rice, scramble the eggs, and stir-fry them together."
+                "Chicken Sandwich",
+                "Cutt chicken into small strips, add mayo, mix together and spread on bread, enjoy."
         );
 
-        addRecipeIngredient(db, eggRiceId, "rice", 1.0, "kg");
-        addRecipeIngredient(db, eggRiceId, "egg", 2.0, "item");
-        addRecipeIngredient(db, eggRiceId, "onion", 1.0, "item");
+        addRecipeIngredient(db,chickenSandwichId, "bread", 2.0, "item");
+        addRecipeIngredient(db,chickenSandwichId, "chicken", 2.0, "g");
 
-        // Recipe 8
-        long potatoChickenId = addRecipe(
+
+        // 6th Recipe
+        long noodlesId = addRecipe(
                 db,
-                "Chicken and Potato",
-                "Cook the chicken and potatoes thoroughly and combine before serving."
+                "Simple Noodles",
+                "Boil all ingredients in noodles pre-pack for 5 minutes, add fried onions"
         );
 
-        addRecipeIngredient(db, potatoChickenId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, potatoChickenId, "potato", 2.0, "item");
+        addRecipeIngredient(db, noodlesId, "noodles", 1.0, "item");
+        addRecipeIngredient(db, noodlesId, "onion", 1.0, "item");
 
-        // Recipe 9
-        long vegetableChickenId = addRecipe(
+        // 7th Recipe
+        long eggNoodlesId = addRecipe(
                 db,
-                "Chicken Vegetable Stir Fry",
-                "Cook the chicken and vegetables in a pan until thoroughly cooked."
+                "Egg noodles",
+                "Fry 1 egg scrambled, boil noodles with pre-packed ingredients, mix together and enjoy."
         );
 
-        addRecipeIngredient(db, vegetableChickenId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, vegetableChickenId, "carrot", 1.0, "item");
-        addRecipeIngredient(db, vegetableChickenId, "onion", 1.0, "item");
+        addRecipeIngredient(db, eggNoodlesId, "noodles", 1.0, "item");
+        addRecipeIngredient(db, eggNoodlesId, "egg", 1.0, "item");
 
-        // Recipe 10
-        long potatoRiceId = addRecipe(
+
+        // 8th Recipe
+        long viennaNoodlesId = addRecipe(
                 db,
-                "Potato Rice",
-                "Cook the potatoes and rice until tender, then combine and serve."
+                "Noodles and Viennas",
+                "Boil the pre-packed noodles, boil the viennas, slice the viennas, add to noodles and enjoy"
         );
 
-        addRecipeIngredient(db, potatoRiceId, "potato", 2.0, "item");
-        addRecipeIngredient(db, potatoRiceId, "rice", 1.0, "kg");
+        addRecipeIngredient(db, viennaNoodlesId, "noodles", 1.0, "item");
+        addRecipeIngredient(db, viennaNoodlesId, "viennas", 2.0, "g");
 
-        // Recipe 11
-        long tomatoEggId = addRecipe(
+        // 9th Recipe
+        long vegNoodlesId = addRecipe(
                 db,
-                "Tomato and Egg",
-                "Cook the tomatoes and add the eggs. Stir gently until the eggs are cooked."
+                "Noodles and Vegetables",
+                "Boil the pre-packed noodles, with 1 sliced carrot and one sliced onion, mix together and enjoy."
         );
 
-        addRecipeIngredient(db, tomatoEggId, "tomato", 2.0, "item");
-        addRecipeIngredient(db, tomatoEggId, "egg", 2.0, "item");
+        addRecipeIngredient(db, vegNoodlesId, "noodles", 1.0, "item");
+        addRecipeIngredient(db, vegNoodlesId, "carrot", 1.0, "item");
+        addRecipeIngredient(db, vegNoodlesId, "onion", 1.0, "item");
 
-        // Recipe 12
-        long vegetableEggId = addRecipe(
+        // 10th Recipe
+        long chickenNoodleId = addRecipe(
                 db,
-                "Vegetable Egg Scramble",
-                "Cook the vegetables and add scrambled eggs. Cook until the eggs are ready."
+                "Noodles and Chicken",
+                "Boil pre-packed noodles, fry 1 piece of chicken in oil and spices, and enjoy."
         );
 
-        addRecipeIngredient(db, vegetableEggId, "egg", 2.0, "item");
-        addRecipeIngredient(db, vegetableEggId, "carrot", 1.0, "item");
-        addRecipeIngredient(db, vegetableEggId, "onion", 1.0, "item");
+        addRecipeIngredient(db, chickenNoodleId, "noodles", 1.0, "item");
+        addRecipeIngredient(db, chickenNoodleId, "chicken", 1.0, "kg");
 
-        // Recipe 13
-        long tomatoChickenId = addRecipe(
+
+        // 11th Recipe
+        long crackersCheeseId = addRecipe(
                 db,
-                "Tomato Chicken",
-                "Cook the chicken thoroughly and add tomatoes and onion."
+                "Crackers and Cheese",
+                "Cut or grate cheese, sprinkle on cracker and enjoy"
         );
 
-        addRecipeIngredient(db, tomatoChickenId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, tomatoChickenId, "tomato", 2.0, "item");
-        addRecipeIngredient(db, tomatoChickenId, "onion", 1.0, "item");
+        addRecipeIngredient(db, crackersCheeseId, "crackers", 4.0, "item");
+        addRecipeIngredient(db, crackersCheeseId, "cheese", 1.0, "item");
 
-        // Recipe 14
-        long potatoVegetableId = addRecipe(
+
+        // 12th Recipe
+        long tunaCrackersId = addRecipe(
                 db,
-                "Potato Vegetable Mix",
-                "Cook the potatoes and vegetables until tender and serve together."
+                "Crackers and Tuna",
+                "Spread tuna on crackers and enjoy"
         );
 
-        addRecipeIngredient(db, potatoVegetableId, "potato", 2.0, "item");
-        addRecipeIngredient(db, potatoVegetableId, "carrot", 1.0, "item");
-        addRecipeIngredient(db, potatoVegetableId, "onion", 1.0, "item");
+        addRecipeIngredient(db, tunaCrackersId, "crackers", 4.0, "item");
+        addRecipeIngredient(db, tunaCrackersId, "tuna", 1.0, "item");
 
-        // Recipe 15
-        long chickenEggId = addRecipe(
+
+        // 13th Recipe
+        long peanutbutterCrackerId = addRecipe(
                 db,
-                "Chicken and Egg",
-                "Cook the chicken thoroughly, prepare the eggs, and serve together."
+                "Crackers and Peanut Butter",
+                "Spread peanut butter on cracker and enjoy"
         );
 
-        addRecipeIngredient(db, chickenEggId, "chicken", 0.5, "kg");
-        addRecipeIngredient(db, chickenEggId, "egg", 2.0, "item");
+        addRecipeIngredient(db, peanutbutterCrackerId, "cracker", 4.0, "item");
+        addRecipeIngredient(db, peanutbutterCrackerId, "peanut butter", 2.0, "g");
+
+        // 14th Recipe
+        long plainCrackerId = addRecipe(
+                db,
+                "Plain Crackers",
+                "Enjoy cracker as is with a cup of tea"
+        );
+
+        addRecipeIngredient(db, plainCrackerId, "cracker", 4.0, "item");
+        addRecipeIngredient(db, plainCrackerId, "tea", 1.0, "item");
+
+        // 15th Recipe
+        long eggCrackerId = addRecipe(
+                db,
+                "Crackers and Eggs",
+                "Boil one egg, add salt and pepper, enjoy with cracker"
+        );
+
+        addRecipeIngredient(db, eggCrackerId, "cracker", 4.0, "item");
+        addRecipeIngredient(db, eggCrackerId, "egg", 1.0, "item");
+
     }
 
     private long addRecipe(
@@ -320,11 +318,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         );
     }
 
-    // -----------------------------
-    // PANTRY CRUD METHODS
-    // -----------------------------
-
-    public long addPantryItem(
+        public long addPantryItem(
             String name,
             String category,
             double quantity,
@@ -349,9 +343,9 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         return db.insert(TABLE_PANTRY, null, values);
     }
 
-    public ArrayList<PantryItem> getAllPantryItems() {
+    public ArrayList<Pantry_Foods> getAllPantryItems() {
 
-        ArrayList<PantryItem> pantryItems = new ArrayList<>();
+        ArrayList<Pantry_Foods> pantryItems = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -385,7 +379,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
             String expiryDate = cursor.getString(
                     cursor.getColumnIndexOrThrow(COLUMN_EXPIRY_DATE));
 
-            PantryItem item = new PantryItem(
+            Pantry_Foods item = new Pantry_Foods(
                     id,
                     name,
                     category,
@@ -433,7 +427,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         );
     }
 
-    public PantryItem getPantryItemById(int id) {
+    public Pantry_Foods getPantryItemById(int id) {
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -447,7 +441,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
                 null
         );
 
-        PantryItem item = null;
+        Pantry_Foods item = null;
 
         if (cursor.moveToFirst()) {
 
@@ -466,7 +460,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
             String expiryDate = cursor.getString(
                     cursor.getColumnIndexOrThrow(COLUMN_EXPIRY_DATE));
 
-            item = new PantryItem(
+            item = new Pantry_Foods(
                     id,
                     name,
                     category,
@@ -492,13 +486,11 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         );
     }
 
-    // -----------------------------
-    // RECIPE METHODS
-    // -----------------------------
 
-    public ArrayList<Recipe> getAllRecipes() {
 
-        ArrayList<Recipe> recipes = new ArrayList<>();
+    public ArrayList<Recipes> getAllRecipes() {
+
+        ArrayList<Recipes> recipes = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -523,7 +515,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
             String instructions = cursor.getString(
                     cursor.getColumnIndexOrThrow(COLUMN_INSTRUCTIONS));
 
-            Recipe recipe = new Recipe(
+            Recipes recipe = new Recipes(
                     id,
                     recipeName,
                     instructions
@@ -537,10 +529,10 @@ public class PantryDBHelper extends SQLiteOpenHelper {
         return recipes;
     }
 
-    public ArrayList<RecipeIngredient> getIngredientsForRecipe(
+    public ArrayList<Recipe_Ingredients> getIngredientsForRecipe(
             int recipeId) {
 
-        ArrayList<RecipeIngredient> ingredients =
+        ArrayList<Recipe_Ingredients> ingredients =
                 new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -552,7 +544,7 @@ public class PantryDBHelper extends SQLiteOpenHelper {
                 new String[]{String.valueOf(recipeId)},
                 null,
                 null,
-                COLUMN_INGREDIENT_NAME + " ASC"
+                  COLUMN_INGREDIENT_NAME+ " ASC"
         );
 
         while (cursor.moveToNext()) {
@@ -573,8 +565,8 @@ public class PantryDBHelper extends SQLiteOpenHelper {
                     cursor.getColumnIndexOrThrow(
                             COLUMN_INGREDIENT_UNIT));
 
-            RecipeIngredient ingredient =
-                    new RecipeIngredient(
+            Recipe_Ingredients ingredient =
+                    new Recipe_Ingredients(
                             id,
                             recipeId,
                             ingredientName,

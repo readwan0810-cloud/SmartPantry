@@ -13,42 +13,42 @@
         android:theme="@style/Theme.SmartPantry">
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Screen_Settings"
             android:exported="false" />
 
         <activity
-            android:name=".RecipeDetailActivity"
+            android:name=".Detailed_Recipe"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".SuggestedRecipesActivity"
+            android:name=".Available_Recipe"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
 
         <activity
-            android:name=".EditItemActivity"
+            android:name=".Edit_Foods"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".AddItemActivity"
+            android:name=".Add_Foods"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ViewItemsActivity"
+            android:name=".View_Foods"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ExpiryActivity"
+            android:name=".Food_Expiry"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".Main_Screen"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
 

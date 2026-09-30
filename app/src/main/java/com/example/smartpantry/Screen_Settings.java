@@ -1,19 +1,16 @@
 package com.example.smartpantry;
-
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
-import android.widget.Switch;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.SharedPreferences;
+import android.os.*;
+import android.widget.*;
 
-public class SettingsActivity extends AppCompatActivity {
+
+
+public class Screen_Settings extends AppCompatActivity {
 
     private Switch switchExpiryAlerts;
     private Spinner spinnerPreferredUnit;
-    private Button btnBackHome;
+    private Button btnBack;
 
     private SharedPreferences preferences;
 
@@ -21,11 +18,11 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.screen_settings);
 
         switchExpiryAlerts = findViewById(R.id.switchExpiryAlerts);
         spinnerPreferredUnit = findViewById(R.id.spinnerPreferredUnit);
-        btnBackHome = findViewById(R.id.btnBackHome);
+        btnBack = findViewById(R.id.btnBack);
 
         preferences = getSharedPreferences(
                 "SmartPantrySettings",
@@ -53,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         spinnerPreferredUnit.setAdapter(adapter);
 
-        // Load previously saved settings
+        // Loading previously saved food items
         boolean expiryAlerts =
                 preferences.getBoolean("expiryAlerts", true);
 
@@ -70,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
-        // Save settings when the user changes them
+        // Saves changes when user initiates them
         switchExpiryAlerts.setOnCheckedChangeListener(
                 (buttonView, isChecked) -> {
 
@@ -105,6 +102,6 @@ public class SettingsActivity extends AppCompatActivity {
                 }
         );
 
-        btnBackHome.setOnClickListener(view -> finish());
+        btnBack.setOnClickListener(view -> finish());
     }
 }

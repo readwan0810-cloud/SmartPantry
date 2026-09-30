@@ -1,72 +1,66 @@
 package com.example.smartpantry;
-
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.*;
+import android.widget.*;
 
-public class AddItemActivity extends AppCompatActivity {
+public class Add_Foods extends AppCompatActivity {
 
-    private EditText editItemName;
-    private EditText editCategory;
-    private EditText editQuantity;
-    private EditText editUnit;
-    private EditText editExpiryDate;
-
-    private Button btnSaveItem;
-    private Button btnBackHome;
-
-    private PantryDBHelper databaseHelper;
+     EditText editFoodName;
+     EditText editCategory;
+     EditText editQuantity;
+     EditText editUnit;
+     EditText editFoodExpiry;
+     Button btnSaveFood;
+     Button btnBack;
+     Pantry_DB databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_add_item);
+        setContentView(R.layout.add_foods);
 
-        editItemName = findViewById(R.id.editItemName);
+        editFoodName = findViewById(R.id.editItemName);
         editCategory = findViewById(R.id.editCategory);
         editQuantity = findViewById(R.id.editQuantity);
         editUnit = findViewById(R.id.editUnit);
-        editExpiryDate = findViewById(R.id.editExpiryDate);
+        editFoodExpiry = findViewById(R.id.editFoodExpiry);
 
-        btnSaveItem = findViewById(R.id.btnSaveItem);
-        btnBackHome = findViewById(R.id.btnBackHome);
+        btnSaveFood = findViewById(R.id.btnSaveItem);
+        btnBack = findViewById(R.id.btnBack);
 
-        databaseHelper = new PantryDBHelper(this);
+        databaseHelper = new Pantry_DB(this);
 
-        btnSaveItem.setOnClickListener(view -> savePantryItem());
+        btnSaveFood.setOnClickListener(view -> savePantryItem());
 
-        btnBackHome.setOnClickListener(view -> finish());
+        btnBack.setOnClickListener(view -> finish());
     }
 
     private void savePantryItem() {
 
-        String itemName = editItemName.getText().toString().trim();
+        String itemName = editFoodName.getText().toString().trim();
         String category = editCategory.getText().toString().trim();
         String quantityText = editQuantity.getText().toString().trim();
         String unit = editUnit.getText().toString().trim();
-        String expiryDate = editExpiryDate.getText().toString().trim();
+        String expiryDate = editFoodExpiry.getText().toString().trim();
 
-        // Validate item name
+        // Item name is validated
         if (itemName.isEmpty()) {
-            editItemName.setError("Please enter an item name");
-            editItemName.requestFocus();
+            editFoodName.setError("Enter food name");
+            editFoodName.requestFocus();
             return;
         }
 
-        // Validate category
+        // The category also validated
         if (category.isEmpty()) {
-            editCategory.setError("Please enter a category");
+            editCategory.setError("Enter food category");
             editCategory.requestFocus();
             return;
         }
 
-        // Validate quantity
+        // Quantity validation
         if (quantityText.isEmpty()) {
-            editQuantity.setError("Please enter a quantity");
+            editQuantity.setError("Enter food quantity");
             editQuantity.requestFocus();
             return;
         }
@@ -76,25 +70,25 @@ public class AddItemActivity extends AppCompatActivity {
         try {
             quantity = Double.parseDouble(quantityText);
         } catch (NumberFormatException e) {
-            editQuantity.setError("Please enter a valid number");
+            editQuantity.setError("Valid number required");
             editQuantity.requestFocus();
             return;
         }
 
         if (quantity <= 0) {
-            editQuantity.setError("Quantity must be greater than zero");
+            editQuantity.setError("Zero is prohibited on quantity");
             editQuantity.requestFocus();
             return;
         }
 
-        // Validate unit
+        // Validating the units
         if (unit.isEmpty()) {
-            editUnit.setError("Please enter a unit");
+            editUnit.setError("Enter a unit");
             editUnit.requestFocus();
             return;
         }
 
-        // Add item to SQLite database
+        // Adds the items to the SQLite database
         long result = databaseHelper.addPantryItem(
                 itemName,
                 category,
@@ -107,24 +101,24 @@ public class AddItemActivity extends AppCompatActivity {
 
             Toast.makeText(
                     this,
-                    "Pantry item saved successfully",
+                    "Food saved successfully",
                     Toast.LENGTH_SHORT
             ).show();
 
-            // Clear the form
-            editItemName.setText("");
+            //Clears the form for new entries
+            editFoodName.setText("");
             editCategory.setText("");
             editQuantity.setText("");
             editUnit.setText("");
-            editExpiryDate.setText("");
+            editFoodExpiry.setText("");
 
-            editItemName.requestFocus();
+            editFoodName.requestFocus();
 
         } else {
 
             Toast.makeText(
                     this,
-                    "Failed to save pantry item",
+                    "This Pantry food item is not saved",
                     Toast.LENGTH_SHORT
             ).show();
         }

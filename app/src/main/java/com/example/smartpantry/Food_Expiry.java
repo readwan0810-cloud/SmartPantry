@@ -1,39 +1,35 @@
 package com.example.smartpantry;
-
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.time.LocalDate;
+import android.os.*;
+import android.widget.*;
+import java.time.*;
+import java.util.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 
-public class ExpiryActivity extends AppCompatActivity {
 
-    private ListView listExpiryItems;
-    private Button btnBackHome;
-    private PantryDBHelper databaseHelper;
+public class Food_Expiry extends AppCompatActivity {
+
+    private ListView listFoodExpiry;
+    private Button btnBack;
+    private Pantry_DB databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Connect Java to the Expiry Dates XML screen
-        setContentView(R.layout.activity_expiry);
+        //Connection for Java to connect with the Expiry screen
+        setContentView(R.layout.food_expiry);
 
-        // Connect Java variables to the XML components
-        listExpiryItems = findViewById(R.id.listExpiryItems);
-        btnBackHome = findViewById(R.id.btnBackHome);
+        //Connection for Java variable to connect with XML
+        listFoodExpiry = findViewById(R.id.listExpiryItems);
+        btnBack = findViewById(R.id.btnBackHome);
 
-        // Connect to the SQLite database
-        databaseHelper = new PantryDBHelper(this);
+        // SQLite database connection
+        databaseHelper = new Pantry_DB(this);
 
         // Return to the Smart Pantry home screen
-        btnBackHome.setOnClickListener(view -> {
+        btnBack.setOnClickListener(view -> {
             finish();
         });
     }
@@ -42,38 +38,38 @@ public class ExpiryActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        // Reload expiry information whenever the screen is opened
+        // Reload expiry information when screen is opened
         loadExpiryItems();
     }
 
     private void loadExpiryItems() {
 
-        // Get pantry items from the SQLite database
-        ArrayList<PantryItem> pantryItems =
+        // Gets food items in the SQLite database
+        ArrayList<Pantry_Foods> pantryItems =
                 databaseHelper.getAllPantryItems();
 
-        // Create a list to display expiry information
+        // Creates a list that displays expiry food information
         ArrayList<String> expiryItems = new ArrayList<>();
 
-        // Get today's date
+        // Get the present date
         LocalDate today = LocalDate.now();
 
-        // Date format used by our app
+        // Date format used in app
         DateTimeFormatter formatter =
                 DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        // Check every pantry item
-        for (PantryItem item : pantryItems) {
+        // Checks food item
+        for (Pantry_Foods item : pantryItems) {
 
             String itemName = item.getItemName();
             String expiryDateText = item.getExpiryDate();
 
-            // Expiry date is optional
+            // Optional expiry date
             if (expiryDateText == null || expiryDateText.trim().isEmpty()) {
 
                 expiryItems.add(
                         itemName
-                                + " | No expiry date"
+                                + " | No food expiry date"
                 );
 
                 continue;
@@ -81,14 +77,14 @@ public class ExpiryActivity extends AppCompatActivity {
 
             try {
 
-                // Convert the expiry date from text to a date
+                // Converts text to a date
                 LocalDate expiryDate =
                         LocalDate.parse(
                                 expiryDateText,
                                 formatter
                         );
 
-                // Work out the number of days until expiry
+                // Works out the days until expiry
                 long daysUntilExpiry =
                         java.time.temporal.ChronoUnit.DAYS.between(
                                 today,
@@ -97,25 +93,25 @@ public class ExpiryActivity extends AppCompatActivity {
 
                 String status;
 
-                // Check whether the item has expired
+                // Checks whether food item is expired
                 if (daysUntilExpiry < 0) {
 
-                    status = "EXPIRED";
+                    status = "Expired";
 
                 }
-                // Check whether the item expires within 7 days
+                // Checks whether food item expires in 7 days
                 else if (daysUntilExpiry <= 7) {
 
-                    status = "EXPIRING SOON";
+                    status = "Expires soon";
 
                 }
-                // Otherwise the item is not expiring soon
+                // Confirms food item is not expired
                 else {
 
-                    status = "NOT EXPIRED";
+                    status = "Not Expired";
                 }
 
-                // Add the item information to the list
+                // Adds food item to the list
                 String itemDetails =
                         itemName
                                 + " | Expiry: " + expiryDateText
@@ -125,7 +121,7 @@ public class ExpiryActivity extends AppCompatActivity {
 
             } catch (DateTimeParseException e) {
 
-                // Display an error if the date format is incorrect
+                // Displays error when the date is incorrect
                 expiryItems.add(
                         itemName
                                 + " | Expiry: " + expiryDateText
@@ -134,7 +130,7 @@ public class ExpiryActivity extends AppCompatActivity {
             }
         }
 
-        // Display a message if the pantry is empty
+        // Display a message when the pantry is empty
         if (expiryItems.isEmpty()) {
 
             expiryItems.add(
@@ -142,7 +138,7 @@ public class ExpiryActivity extends AppCompatActivity {
             );
         }
 
-        // Create the ListView adapter
+        // Create the view adapter list
         ArrayAdapter<String> adapter =
                 new ArrayAdapter<>(
                         this,
@@ -150,7 +146,7 @@ public class ExpiryActivity extends AppCompatActivity {
                         expiryItems
                 );
 
-        // Display the expiry information
-        listExpiryItems.setAdapter(adapter);
+        // Displays food expiry information
+        listFoodExpiry.setAdapter(adapter);
     }
 }

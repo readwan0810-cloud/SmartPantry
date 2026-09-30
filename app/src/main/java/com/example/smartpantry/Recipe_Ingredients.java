@@ -1,6 +1,6 @@
 package com.example.smartpantry;
 
-public class RecipeIngredient {
+public class Recipe_Ingredients {
 
     private int id;
     private int recipeId;
@@ -8,7 +8,7 @@ public class RecipeIngredient {
     private double requiredQuantity;
     private String unit;
 
-    public RecipeIngredient(
+    public Recipe_Ingredients(
             int id,
             int recipeId,
             String ingredientName,

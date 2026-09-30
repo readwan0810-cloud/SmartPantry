@@ -1,36 +1,32 @@
 package com.example.smartpantry;
-
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.*;
+import android.widget.*;
+import java.util.*;
 
-import java.util.ArrayList;
+public class Detailed_Recipe extends AppCompatActivity {
 
-public class RecipeDetailActivity extends AppCompatActivity {
+    private TextView txtFoodName;
+    private TextView txtFoodIngredients;
+    private TextView txtFoodInstructions;
+    private Button btnBack;
 
-    private TextView txtRecipeName;
-    private TextView txtRecipeIngredients;
-    private TextView txtRecipeInstructions;
-    private Button btnBackRecipes;
-
-    private PantryDBHelper databaseHelper;
+    private Pantry_DB databaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_recipe_detail);
+        setContentView(R.layout.detailed_recipe);
 
-        txtRecipeName = findViewById(R.id.txtRecipeName);
-        txtRecipeIngredients = findViewById(R.id.txtRecipeIngredients);
-        txtRecipeInstructions = findViewById(R.id.txtRecipeInstructions);
-        btnBackRecipes = findViewById(R.id.btnBackRecipes);
+        txtFoodName = findViewById(R.id.txtRecipeName);
+        txtFoodIngredients = findViewById(R.id.txtRecipeIngredients);
+        txtFoodInstructions = findViewById(R.id.txtRecipeInstructions);
+        btnBack = findViewById(R.id.btnBackRecipes);
 
-        databaseHelper = new PantryDBHelper(this);
+        databaseHelper = new Pantry_DB(this);
 
-        btnBackRecipes.setOnClickListener(view -> {
+        btnBack.setOnClickListener(view -> {
             finish();
         });
 
@@ -43,12 +39,12 @@ public class RecipeDetailActivity extends AppCompatActivity {
 
     private void loadRecipeDetails(int recipeId) {
 
-        ArrayList<Recipe> recipes =
+        ArrayList<Recipes> recipes =
                 databaseHelper.getAllRecipes();
 
-        Recipe selectedRecipe = null;
+        Recipes selectedRecipe = null;
 
-        for (Recipe recipe : recipes) {
+        for (Recipes recipe : recipes) {
 
             if (recipe.getId() == recipeId) {
                 selectedRecipe = recipe;
@@ -57,21 +53,21 @@ public class RecipeDetailActivity extends AppCompatActivity {
         }
 
         if (selectedRecipe == null) {
-            txtRecipeName.setText("Recipe not found");
+            txtFoodName.setText("This Recipe was not found");
             return;
         }
 
-        txtRecipeName.setText(
+        txtFoodName.setText(
                 selectedRecipe.getRecipeName()
         );
 
-        ArrayList<RecipeIngredient> ingredients =
+        ArrayList<Recipe_Ingredients> ingredients =
                 databaseHelper.getIngredientsForRecipe(recipeId);
 
         StringBuilder ingredientText =
                 new StringBuilder();
 
-        for (RecipeIngredient ingredient : ingredients) {
+        for (Recipe_Ingredients ingredient : ingredients) {
 
             ingredientText
                     .append("• ")
@@ -83,11 +79,11 @@ public class RecipeDetailActivity extends AppCompatActivity {
                     .append("\n");
         }
 
-        txtRecipeIngredients.setText(
+        txtFoodIngredients.setText(
                 ingredientText.toString()
         );
 
-        txtRecipeInstructions.setText(
+        txtFoodInstructions.setText(
                 selectedRecipe.getInstructions()
         );
     }

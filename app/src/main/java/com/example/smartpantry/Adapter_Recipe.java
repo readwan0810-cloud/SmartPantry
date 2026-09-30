@@ -1,20 +1,15 @@
 package com.example.smartpantry;
-
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.TextView;
+import android.view.*;
+import android.widget.*;
+import java.util.*;
 
-import java.util.ArrayList;
-
-public class RecipeAdapter extends BaseAdapter {
+public class Adapter_Recipe extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Recipe> recipes;
+    private ArrayList<Recipes> recipes;
 
-    public RecipeAdapter(Context context, ArrayList<Recipe> recipes) {
+    public Adapter_Recipe(Context context, ArrayList<Recipes> recipes) {
         this.context = context;
         this.recipes = recipes;
     }
@@ -39,7 +34,7 @@ public class RecipeAdapter extends BaseAdapter {
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
-                    .inflate(R.layout.recipe_list_item, parent, false);
+                    .inflate(R.layout.recipe_ingredients, parent, false);
         }
 
         TextView txtRecipeName =
@@ -48,10 +43,10 @@ public class RecipeAdapter extends BaseAdapter {
         TextView txtRecipeStatus =
                 convertView.findViewById(R.id.txtRecipeStatus);
 
-        Recipe recipe = recipes.get(position);
+        Recipes recipe = recipes.get(position);
 
         txtRecipeName.setText(recipe.getRecipeName());
-        txtRecipeStatus.setText("Ready to cook with your pantry");
+        txtRecipeStatus.setText("Click item & view how to make it");
 
         return convertView;
     }

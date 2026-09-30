@@ -1,86 +1,82 @@
 package com.example.smartpantry;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Button;
-
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+import androidx.appcompat.widget.*;
+import android.os.Bundle;
+import android.view.*;
+import android.widget.Button;
+import android.content.*;
 
-public class MainActivity extends AppCompatActivity {
+public class Main_Screen extends AppCompatActivity {
 
-    private Button btnAddItem;
-    private Button btnViewItems;
-    private Button btnExpiry;
-    private Button btnSuggestedRecipes;
-    private Button btnSettings;
+    Button btnAdd_Item;
+    Button btnView_Item;
+    Button btnExpiry;
+    Button btnAvailableRecipes;
+    Button btnSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_screen);
 
-        // Set up the toolbar
+        // The toolbar setup
         Toolbar toolbar = findViewById(R.id.mainToolbar);
         setSupportActionBar(toolbar);
 
-        // Connect buttons from the Home screen
-        btnAddItem = findViewById(R.id.btnAddItem);
-        btnViewItems = findViewById(R.id.btnViewItems);
+        // Buttons connecting the home screen
+        btnAdd_Item = findViewById(R.id.btnAdd_Item);
+        btnView_Item = findViewById(R.id.btnView_Items);
         btnExpiry = findViewById(R.id.btnExpiry);
-        btnSuggestedRecipes = findViewById(R.id.btnSuggestedRecipes);
+        btnAvailableRecipes = findViewById(R.id.btnAvailableRecipes);
         btnSettings = findViewById(R.id.btnSettings);
 
-        // Add Pantry Item
-        btnAddItem.setOnClickListener(view -> {
+        // Pantry Items button
+        btnAdd_Item.setOnClickListener(view -> {
             Intent intent = new Intent(
-                    MainActivity.this,
-                    AddItemActivity.class
+                    Main_Screen.this,
+                    Add_Foods.class
+            );
+            startActivity(intent);
+        });
+        // The pantry items view button
+        btnView_Item.setOnClickListener(view -> {
+            Intent intent = new Intent(
+                    Main_Screen.this,
+                    View_Foods.class
             );
             startActivity(intent);
         });
 
-        // View Pantry Items
-        btnViewItems.setOnClickListener(view -> {
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    ViewItemsActivity.class
-            );
-            startActivity(intent);
-        });
-
-        // Check Expiry Dates
+        // Expiry dates button
         btnExpiry.setOnClickListener(view -> {
             Intent intent = new Intent(
-                    MainActivity.this,
-                    ExpiryActivity.class
+                    Main_Screen.this,
+                    Food_Expiry.class
             );
             startActivity(intent);
         });
 
-        // Suggested Recipes
-        btnSuggestedRecipes.setOnClickListener(view -> {
+        // The available recipes button
+        btnAvailableRecipes.setOnClickListener(view -> {
             Intent intent = new Intent(
-                    MainActivity.this,
-                    SuggestedRecipesActivity.class
+                    Main_Screen.this,
+                    Available_Recipe.class
             );
             startActivity(intent);
         });
 
-        // Settings
+        // Settings button on home screen
         btnSettings.setOnClickListener(view -> {
             Intent intent = new Intent(
-                    MainActivity.this,
-                    SettingsActivity.class
+                    Main_Screen.this,
+                    Screen_Settings.class
             );
             startActivity(intent);
         });
     }
 
-    // Create the toolbar menu
+    // The toolbar menu is created
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -92,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // Handle toolbar menu selections
+    // Toolbar menu selections
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -101,8 +97,8 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.menuPantry) {
 
             Intent intent = new Intent(
-                    MainActivity.this,
-                    ViewItemsActivity.class
+                    Main_Screen.this,
+                    View_Foods.class
             );
 
             startActivity(intent);
@@ -113,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.menuRecipes) {
 
             Intent intent = new Intent(
-                    MainActivity.this,
-                    SuggestedRecipesActivity.class
+                    Main_Screen.this,
+                    Available_Recipe.class
             );
 
             startActivity(intent);
@@ -125,8 +121,8 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.menuExpiry) {
 
             Intent intent = new Intent(
-                    MainActivity.this,
-                    ExpiryActivity.class
+                    Main_Screen.this,
+                    Food_Expiry.class
             );
 
             startActivity(intent);
@@ -137,8 +133,8 @@ public class MainActivity extends AppCompatActivity {
         if (itemId == R.id.menuSettings) {
 
             Intent intent = new Intent(
-                    MainActivity.this,
-                    SettingsActivity.class
+                    Main_Screen.this,
+                    Screen_Settings.class
             );
 
             startActivity(intent);

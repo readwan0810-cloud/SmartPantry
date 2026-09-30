@@ -1,6 +1,6 @@
 package com.example.smartpantry;
 
-public class PantryItem {
+public class Pantry_Foods {
 
     private int id;
     private String itemName;
@@ -9,7 +9,7 @@ public class PantryItem {
     private String unit;
     private String expiryDate;
 
-    public PantryItem(
+    public Pantry_Foods(
             int id,
             String itemName,
             String category,

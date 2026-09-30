@@ -1,24 +1,21 @@
 package com.example.smartpantry;
-
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.os.*;
+import android.widget.*;
 
-public class EditItemActivity extends AppCompatActivity {
 
-    private EditText editItemName;
+public class Edit_Foods extends AppCompatActivity {
+
+    private EditText editFoodName;
     private EditText editCategory;
     private EditText editQuantity;
     private EditText editUnit;
-    private EditText editExpiryDate;
-    private Button btnUpdateItem;
-    private Button btnDeleteItem;
+    private EditText editFoodExpiry;
+    private Button btnUpdateFood;
+    private Button btnDeleteFood;
     private Button btnCancel;
 
-    private PantryDBHelper databaseHelper;
+    private Pantry_DB databaseHelper;
 
     private int itemId;
 
@@ -26,27 +23,27 @@ public class EditItemActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_edit_item);
+        setContentView(R.layout.edit_foods);
 
-        editItemName = findViewById(R.id.editItemName);
+        editFoodName = findViewById(R.id.editItemName);
         editCategory = findViewById(R.id.editCategory);
         editQuantity = findViewById(R.id.editQuantity);
         editUnit = findViewById(R.id.editUnit);
-        editExpiryDate = findViewById(R.id.editExpiryDate);
+        editFoodExpiry = findViewById(R.id.editExpiryDate);
 
-        btnUpdateItem = findViewById(R.id.btnUpdateItem);
-        btnDeleteItem = findViewById(R.id.btnDeleteItem);
+        btnUpdateFood = findViewById(R.id.btnUpdateItem);
+        btnDeleteFood = findViewById(R.id.btnDeleteItem);
         btnCancel = findViewById(R.id.btnCancel);
 
-        databaseHelper = new PantryDBHelper(this);
+        databaseHelper = new Pantry_DB(this);
 
         itemId = getIntent().getIntExtra("ITEM_ID", -1);
 
         loadItem();
 
-        btnUpdateItem.setOnClickListener(view -> updateItem());
+        btnUpdateFood.setOnClickListener(view -> updateItem());
 
-        btnDeleteItem.setOnClickListener(view -> deleteItem());
+        btnDeleteFood.setOnClickListener(view -> deleteItem());
 
         btnCancel.setOnClickListener(view -> finish());
     }
@@ -64,7 +61,7 @@ public class EditItemActivity extends AppCompatActivity {
             return;
         }
 
-        PantryItem item = databaseHelper.getPantryItemById(itemId);
+        Pantry_Foods item = databaseHelper.getPantryItemById(itemId);
 
         if (item == null) {
 
@@ -78,39 +75,39 @@ public class EditItemActivity extends AppCompatActivity {
             return;
         }
 
-        editItemName.setText(item.getItemName());
+        editFoodName.setText(item.getItemName());
         editCategory.setText(item.getCategory());
         editQuantity.setText(String.valueOf(item.getQuantity()));
         editUnit.setText(item.getUnit());
 
         if (item.getExpiryDate() != null) {
-            editExpiryDate.setText(item.getExpiryDate());
+            editFoodExpiry.setText(item.getExpiryDate());
         }
     }
 
 
     private void updateItem() {
 
-        String itemName = editItemName.getText().toString().trim();
+        String itemName = editFoodName.getText().toString().trim();
         String category = editCategory.getText().toString().trim();
         String quantityText = editQuantity.getText().toString().trim();
         String unit = editUnit.getText().toString().trim();
-        String expiryDate = editExpiryDate.getText().toString().trim();
+        String expiryDate = editFoodExpiry.getText().toString().trim();
 
         if (itemName.isEmpty()) {
-            editItemName.setError("Please enter an item name");
-            editItemName.requestFocus();
+            editFoodName.setError("Enter food name");
+            editFoodName.requestFocus();
             return;
         }
 
         if (category.isEmpty()) {
-            editCategory.setError("Please enter a category");
+            editCategory.setError("Enter food category");
             editCategory.requestFocus();
             return;
         }
 
         if (quantityText.isEmpty()) {
-            editQuantity.setError("Please enter a quantity");
+            editQuantity.setError("Enter food quantity");
             editQuantity.requestFocus();
             return;
         }
@@ -120,19 +117,19 @@ public class EditItemActivity extends AppCompatActivity {
         try {
             quantity = Double.parseDouble(quantityText);
         } catch (NumberFormatException e) {
-            editQuantity.setError("Please enter a valid number");
+            editQuantity.setError("Enter a valid number for food quantity");
             editQuantity.requestFocus();
             return;
         }
 
         if (quantity <= 0) {
-            editQuantity.setError("Quantity must be greater than zero");
+            editQuantity.setError("Enter food quantity greater than zero");
             editQuantity.requestFocus();
             return;
         }
 
         if (unit.isEmpty()) {
-            editUnit.setError("Please enter a unit");
+            editUnit.setError("Please enter a unit amount");
             editUnit.requestFocus();
             return;
         }
@@ -150,7 +147,7 @@ public class EditItemActivity extends AppCompatActivity {
 
             Toast.makeText(
                     this,
-                    "Pantry item updated successfully",
+                    "Food item updated successfully",
                     Toast.LENGTH_SHORT
             ).show();
 
@@ -160,7 +157,7 @@ public class EditItemActivity extends AppCompatActivity {
 
             Toast.makeText(
                     this,
-                    "Failed to update pantry item",
+                    "Failed to update food item",
                     Toast.LENGTH_SHORT
             ).show();
         }
@@ -168,10 +165,9 @@ public class EditItemActivity extends AppCompatActivity {
     private void deleteItem() {
 
         new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Delete Pantry Item")
-                .setMessage("Are you sure you want to delete this pantry item?")
-                .setNegativeButton("CANCEL", null)
-                .setPositiveButton("DELETE", (dialog, which) -> {
+                .setTitle("Delete Food Item")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Delete", (dialog, which) -> {
 
                     int result = databaseHelper.deletePantryItem(itemId);
 
@@ -179,7 +175,7 @@ public class EditItemActivity extends AppCompatActivity {
 
                         Toast.makeText(
                                 this,
-                                "Pantry item deleted successfully",
+                                "Food item deleted",
                                 Toast.LENGTH_SHORT
                         ).show();
 
@@ -189,7 +185,7 @@ public class EditItemActivity extends AppCompatActivity {
 
                         Toast.makeText(
                                 this,
-                                "Failed to delete pantry item",
+                                "Failed to delete food item",
                                 Toast.LENGTH_SHORT
                         ).show();
                     }

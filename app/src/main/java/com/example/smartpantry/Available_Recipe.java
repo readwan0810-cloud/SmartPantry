@@ -1,52 +1,47 @@
 package com.example.smartpantry;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.*;
+import android.widget.*;
+import java.util.*;
 
-import java.util.ArrayList;
+public class Available_Recipe extends AppCompatActivity {
 
-public class SuggestedRecipesActivity extends AppCompatActivity {
+    private ListView listAvailableRecipes;
+    private Button btnBack;
 
-    private ListView listSuggestedRecipes;
-    private Button btnBackHome;
+    private Pantry_DB databaseHelper;
 
-    private PantryDBHelper databaseHelper;
-
-    private ArrayList<Recipe> suggestedRecipes;
+    private ArrayList<Recipes> availableRecipes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_suggested_recipes);
+        setContentView(R.layout.available_recipe);
 
-        listSuggestedRecipes =
+        listAvailableRecipes =
                 findViewById(R.id.listSuggestedRecipes);
 
-        btnBackHome =
+        btnBack =
                 findViewById(R.id.btnBackHome);
 
-        databaseHelper = new PantryDBHelper(this);
+        databaseHelper = new Pantry_DB(this);
 
 
-        btnBackHome.setOnClickListener(view -> {
+        btnBack.setOnClickListener(view -> {
             finish();
         });
 
-        listSuggestedRecipes.setOnItemClickListener(
+        listAvailableRecipes.setOnItemClickListener(
                 (parent, view, position, id) -> {
 
-                    Recipe selectedRecipe =
-                            suggestedRecipes.get(position);
+                    Recipes selectedRecipe =
+                            availableRecipes.get(position);
 
                     Intent intent = new Intent(
-                            SuggestedRecipesActivity.this,
-                            RecipeDetailActivity.class
+                            Available_Recipe.this,
+                            Detailed_Recipe.class
                     );
 
                     intent.putExtra(
@@ -63,24 +58,24 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private void loadSuggestedRecipes() {
 
-        ArrayList<Recipe> allRecipes =
+        ArrayList<Recipes> allRecipes =
                 databaseHelper.getAllRecipes();
 
-        ArrayList<PantryItem> pantryItems =
+        ArrayList<Pantry_Foods> pantryItems =
                 databaseHelper.getAllPantryItems();
 
-        suggestedRecipes = new ArrayList<>();
+        availableRecipes = new ArrayList<>();
 
-        for (Recipe recipe : allRecipes) {
+        for (Recipes recipe : allRecipes) {
 
-            ArrayList<RecipeIngredient> ingredients =
+            ArrayList<Recipe_Ingredients> ingredients =
                     databaseHelper.getIngredientsForRecipe(
                             recipe.getId()
                     );
 
             boolean canMakeRecipe = true;
 
-            for (RecipeIngredient ingredient : ingredients) {
+            for (Recipe_Ingredients ingredient : ingredients) {
 
                 if (!hasEnoughIngredient(
                         ingredient,
@@ -92,11 +87,11 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             }
 
             if (canMakeRecipe) {
-                suggestedRecipes.add(recipe);
+                availableRecipes.add(recipe);
             }
         }
 
-        if (suggestedRecipes.isEmpty()) {
+        if (availableRecipes.isEmpty()) {
 
             Toast.makeText(
                     this,
@@ -107,18 +102,18 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
             return;
         }
 
-        RecipeAdapter adapter =
-                new RecipeAdapter(
+        Adapter_Recipe adapter =
+                new Adapter_Recipe(
                         this,
-                        suggestedRecipes
+                        availableRecipes
                 );
 
-        listSuggestedRecipes.setAdapter(adapter);
+        listAvailableRecipes.setAdapter(adapter);
     }
 
     private boolean hasEnoughIngredient(
-            RecipeIngredient requiredIngredient,
-            ArrayList<PantryItem> pantryItems) {
+            Recipe_Ingredients requiredIngredient,
+            ArrayList<Pantry_Foods> pantryItems) {
 
         String requiredName =
                 normalizeIngredientName(
@@ -135,21 +130,29 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
 
         double availableQuantity = 0;
 
-        for (PantryItem pantryItem : pantryItems) {
+        for (Pantry_Foods pantryItem : pantryItems) {
 
             String pantryName =
                     normalizeIngredientName(
                             pantryItem.getItemName()
                     );
 
-            if (!requiredName.equals(pantryName)) {
-                continue;
-            }
-
             String pantryUnit =
                     normalizeUnit(
                             pantryItem.getUnit()
                     );
+
+            System.out.println(
+                    "RECIPE CHECK: " +
+                            "Required = " + requiredName +
+                            " " + requiredQuantity + " " + requiredUnit +
+                            " | Pantry = " + pantryName +
+                            " " + pantryItem.getQuantity() + " " + pantryUnit
+            );
+
+            if (!requiredName.equals(pantryName)) {
+                continue;
+            }
 
             double convertedQuantity =
                     convertQuantity(
@@ -158,10 +161,26 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
                             requiredUnit
                     );
 
+            System.out.println(
+                    "MATCH: " +
+                            requiredName +
+                            " | Converted quantity = " +
+                            convertedQuantity
+            );
+
             if (convertedQuantity >= 0) {
                 availableQuantity += convertedQuantity;
             }
         }
+
+        System.out.println(
+                "RESULT: " +
+                        requiredName +
+                        " | Required = " +
+                        requiredQuantity +
+                        " | Available = " +
+                        availableQuantity
+        );
 
         return availableQuantity >= requiredQuantity;
     }

@@ -1,46 +1,40 @@
 package com.example.smartpantry;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-
 import androidx.appcompat.app.AppCompatActivity;
+import android.content.*;
+import android.os.*;
+import android.widget.*;
+import java.util.*;
 
-import java.util.ArrayList;
+public class View_Foods extends AppCompatActivity {
 
-public class ViewItemsActivity extends AppCompatActivity {
+    Pantry_DB databaseHelper;
+    Button btnBack;
+    ListView listViewFoods;
 
-    private ListView listPantryItems;
-    private Button btnBackHome;
-
-    private PantryDBHelper databaseHelper;
-
-    private ArrayList<PantryItem> pantryItems;
+     ArrayList<Pantry_Foods> pantryFoods;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_view_items);
+        setContentView(R.layout.view_foods);
 
-        listPantryItems = findViewById(R.id.listPantryItems);
-        btnBackHome = findViewById(R.id.btnBackHome);
+        listViewFoods = findViewById(R.id.listFoodItems);
+        btnBack = findViewById(R.id.btnBack);
 
-        databaseHelper = new PantryDBHelper(this);
+        databaseHelper = new Pantry_DB(this);
 
-        btnBackHome.setOnClickListener(view -> finish());
+        btnBack.setOnClickListener(view -> finish());
 
-        listPantryItems.setOnItemClickListener((parent, view, position, id) -> {
+        listViewFoods.setOnItemClickListener((parent, view, position, id) -> {
 
-            if (!pantryItems.isEmpty()) {
+            if (!pantryFoods.isEmpty()) {
 
-                PantryItem selectedItem = pantryItems.get(position);
+                Pantry_Foods selectedItem = pantryFoods.get(position);
 
                 Intent intent = new Intent(
-                        ViewItemsActivity.this,
-                        EditItemActivity.class
+                        View_Foods.this,
+                        Edit_Foods.class
                 );
 
                 intent.putExtra("ITEM_ID", selectedItem.getId());
@@ -59,11 +53,11 @@ public class ViewItemsActivity extends AppCompatActivity {
 
     private void loadPantryItems() {
 
-        pantryItems = databaseHelper.getAllPantryItems();
+        pantryFoods = databaseHelper.getAllPantryItems();
 
         ArrayList<String> displayItems = new ArrayList<>();
 
-        for (PantryItem item : pantryItems) {
+        for (Pantry_Foods item : pantryFoods) {
 
             String expiry;
 
@@ -94,7 +88,7 @@ public class ViewItemsActivity extends AppCompatActivity {
         if (displayItems.isEmpty()) {
 
             displayItems.add(
-                    "Your pantry is currently empty."
+                    "Pantry empty."
             );
         }
 
@@ -105,6 +99,6 @@ public class ViewItemsActivity extends AppCompatActivity {
                         displayItems
                 );
 
-        listPantryItems.setAdapter(adapter);
+        listViewFoods.setAdapter(adapter);
     }
 }
